@@ -1,5 +1,5 @@
-lib/
-.pio/
+.pio
 .vscode/
+examples/
 test/
-platformio.ini
+lib/

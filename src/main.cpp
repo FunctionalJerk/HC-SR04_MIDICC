@@ -1,19 +1,26 @@
+#include <iostream>
 #include <Arduino.h>
+#include <avr/io.h>
 #include <SoftwareSerial.h>
 #include <NewPing.h> 
 #include <header.h>
+
+namespace std;
 
 // MIDI_CREATE_DEFAULT_INSTANCE();
 // Variables:
 byte cc = 0;
 byte lastValue;   // define the "lastValue" variables
 byte lastAValue;
-byte thresh = 2;  //try 4 or 8
-byte threshA = 4; //try 4 or 8
-int chNum = 4;
+byte thresh = 8;  //try 4 or 8
+byte threshA = 2; 
+// int chNum = 4;
+bool ledState = HIGH;
 //float analogValue = 0.0; // define variables for the controller data
-int note = 60;
-short mode = 0;
+// int note = 60;
+// short mode = 0;
+// bool button = false;
+// unsigned long timer = 0; 
 
 int arr[] = {
   0,  // Bank Select (MSB) - Allows user to switch bank for patch selection. Program change used with Bank Select. MIDI can access 16,384 patches per MIDI channel.
@@ -33,7 +40,7 @@ int arr[] = {
 SoftwareSerial midiSerial(0, 1); // digital pins that we'll use for soft serial RX & TX
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, DISTANCE); 
 
-boolean includes(int array[], int element);
+// boolean includes(int array[], int element);
 boolean includes(int array[], int element) {
  for (int i = 0; i <= MAX_CH; i++) {
       if (array[i] == element) {
@@ -45,36 +52,45 @@ boolean includes(int array[], int element) {
 
 void setup() {
   //  launch MIDI
-  midiSerial.begin(31250);
+  // midiSerial.begin(31250);
+  Serial.begin(9600);
   // pinMode(RED_PIN, OUTPUT);
   // pinMode(GREEN_PIN, OUTPUT);
-  // pinMode(BLUE_PIN, OUTPUT);
-  // MIDI.begin(1);
+  // pinMode(BLUE_PIN, OUTPUT);+
+  // timer = 0;
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, ledState);
 }
 
 // Continuous Controller Function
-void controlChange(byte ChannelByte,byte ControlNumber,byte ControlValue){
+void controlChange(byte ChannelByte, byte ControlNumber, byte ControlValue){
   midiSerial.write(ChannelByte + 0xb0);
   midiSerial.write(ControlNumber);
   midiSerial.write(ControlValue);
 }
 
+// // Continuous Note Function
+// void noteChange(byte ChannelByte, byte NoteNumber, byte NoteValue){
+//   midiSerial.write(ChannelByte + 0xb0);
+//   midiSerial.write(NoteNumber);
+//   midiSerial.write(NoteValue);
+// }
+
 void loop() {
+  // timer = millis();
+  // this must run continuous, 
+  // as soon as millis() exists
+  ledState = !ledState;
+  digitalWrite(LED_PIN, ledState); 
+  // digitalWrite(LED_PIN, HIGH); 
+  // chNum = analogRead(AIN_PIN);
 
-  chNum = analogRead(AIN_PIN);
-  if(abs(chNum - lastAValue) > (threshA)) {
-    lastAValue = chNum;
-  }  
-
-  chNum = map(chNum, 0, 1024, 0, MAX_CH);
-  if(includes(arr, chNum)) {
-    chNum = 7;
-  }
-
-  cc = sonar.ping_cm();
+  // cc = sonar.ping_cm(); // wrong!?
+  Serial.println(cc);
+  Serial.println("Hallo!");
   cc = constrain(cc, 0, 254);  
   if(abs(cc - lastValue) > (thresh)) {
-    controlChange(0, chNum, cc);
+    controlChange(0, CH_NUM, cc);
     lastValue = cc;
   }  
   delay(30); // this must be replaced by millis()
