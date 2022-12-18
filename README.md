@@ -9,29 +9,24 @@ For cost reduction, this project will someday run on a Digistump Digispark / (At
 - add Switch ('up<->down', 'down<->up', 'note / cc / both')
 - smoothing
 - add DIN-MIDI
-- add Fritzing.png
 - make Digistump work
-
-## ressources
-
-[teensy-midi](https://www.pjrc.com/teensy/td_midi.html)
 
 # Teensyduino
 
-## Requirements
-
-### Wiring 
-**BOM**
+## Wiring 
 - Teensy 3.1 / 3.2
 - HC-SR04 - ultrasonic distance sensor
 - a/b toggle-switch 
 
-**fritzing**
 ![fritzing](fritzing/HC-SR04_MIDICC_bb.png)
 
+## Requirements
 
-Working in VSCode, you dont have the option of changing the USB-type to USB-MIDI. 
-In order to do so, execute following commands: (as described by user *ivankravets* [here](https://community.platformio.org/t/teensy2-0-usb-type-midi/511/2) )
+[Install PlatformIO for Visual Studio Code](https://docs.platformio.org/en/latest/integration/ide/vscode.html)
+
+You wont have the option of changing the USB-type to USB-MIDI, as [arduino instructions for usbMIDI](https://www.pjrc.com/teensy/td_midi.html) suggest.  
+In order to do so within VSCode, execute following commands (as described by user *ivankravets* [here](https://community.platformio.org/t/teensy2-0-usb-type-midi/511/2)):
+
 ```bash
 cd ~/.platformio/packages/framework-arduinoteensy/cores/teensy/
 rm -rf usb_serial
