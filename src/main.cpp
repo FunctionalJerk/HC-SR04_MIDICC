@@ -1,97 +1,55 @@
-#include <iostream>
 #include <Arduino.h>
-#include <avr/io.h>
-#include <SoftwareSerial.h>
-#include <NewPing.h> 
-#include <header.h>
+#include <HCSR04.h>
 
-namespace std;
+#define TRIG_PIN 11
+#define ECHO_PIN 12
+#define DISTANCE 100
+// #define MIDI_NAME {'P', 'h', 'o', 'e', 'n', 'i,', 'g', 's', ' ', 'U', 'S', 'B'}
+// #define MIDI_NAME_LEN 12
 
-// MIDI_CREATE_DEFAULT_INSTANCE();
-// Variables:
-byte cc = 0;
-byte lastValue;   // define the "lastValue" variables
-byte lastAValue;
-byte thresh = 8;  //try 4 or 8
-byte threshA = 2; 
-// int chNum = 4;
-bool ledState = HIGH;
-//float analogValue = 0.0; // define variables for the controller data
-// int note = 60;
-// short mode = 0;
-// bool button = false;
-// unsigned long timer = 0; 
+// struct usb_string_descriptor_struct usb_product_name
 
-int arr[] = {
-  0,  // Bank Select (MSB) - Allows user to switch bank for patch selection. Program change used with Bank Select. MIDI can access 16,384 patches per MIDI channel.
-  6,  // Data Entry (MSB) - Controls Value for NRPN or RPN parameters.
-  64, // Damper Pedal on/off - On/off switch that controls sustain pedal. Nearly every synth will react to CC 64. (See also Sostenuto CC 66)
-  65, // Portamento on/off - On/off switch
-  66, // Sostenuto Pedal on/off - On/off switch – Like the Sustain controller (CC 64), However, it only holds notes that were “On” when the pedal was pressed.
-  67, // Soft Pedal on/off - On/off switch - Lowers the volume of notes played.
-  68, // Legato FootSwitch - On/off switch - Turns Legato effect between 2 subsequent notes on or off.
-  69, // Hold 2 -	Another way to “hold notes” (see MIDI CC 64 and MIDI CC 66). However notes fade out according to their release parameter rather than when the pedal is released.
-  82, // General Purpose MIDI CC Controller - Generic on/off switch - ≤63 off, ≥64 on
-  88, // High Resolution Velocity Prefix - Extends the range of possible velocity values
-  96, // (+1) Data Increment - Usually used to increment data for RPN and NRPN messages.
-  97  // (-1) Data Increment - Usually used to increment data for RPN and NRPN messages.
-};
+UltraSonicDistanceSensor distanceSensor(TRIG_PIN, ECHO_PIN, DISTANCE);  // Initialize sensor that uses digital pins 11(trig) and 12(echo).
 
-SoftwareSerial midiSerial(0, 1); // digital pins that we'll use for soft serial RX & TX
-NewPing sonar(TRIGGER_PIN, ECHO_PIN, DISTANCE); 
+float dist = 50.0;
+float sens = 0.0;
+float lastVal = 0.0; 
+const float thresh = 0.5F;
 
-// boolean includes(int array[], int element);
-boolean includes(int array[], int element) {
- for (int i = 0; i <= MAX_CH; i++) {
-      if (array[i] == element) {
-        return true;
-      }
-    }
-  return false;
-}
+bool ledState = LOW; 
+
+uint8_t midiCur = 0;          // Current state of the midi value; delete 0 if 0 pots
+uint8_t midiPre = 0;          // Previous state of the midi value; delete 0 if 0 pots
+
+// MIDI Assignments 
+const byte midiCh = 1;   //* MIDI channel to be used
+const byte note = 0;     //* Lowest note to be used; 36 = C2; 60 = Middle C
+const byte cc = 23;       //* cc-no
 
 void setup() {
-  //  launch MIDI
-  // midiSerial.begin(31250);
-  Serial.begin(9600);
-  // pinMode(RED_PIN, OUTPUT);
-  // pinMode(GREEN_PIN, OUTPUT);
-  // pinMode(BLUE_PIN, OUTPUT);+
-  // timer = 0;
-  pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, ledState);
+  Serial.begin(31250); //**  Baud Rate 31250 for MIDI class compliant jack | 115200 for Hairless MIDI
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(13, LOW);
 }
-
-// Continuous Controller Function
-void controlChange(byte ChannelByte, byte ControlNumber, byte ControlValue){
-  midiSerial.write(ChannelByte + 0xb0);
-  midiSerial.write(ControlNumber);
-  midiSerial.write(ControlValue);
-}
-
-// // Continuous Note Function
-// void noteChange(byte ChannelByte, byte NoteNumber, byte NoteValue){
-//   midiSerial.write(ChannelByte + 0xb0);
-//   midiSerial.write(NoteNumber);
-//   midiSerial.write(NoteValue);
-// }
 
 void loop() {
-  // timer = millis();
-  // this must run continuous, 
-  // as soon as millis() exists
-  ledState = !ledState;
-  digitalWrite(LED_PIN, ledState); 
-  // digitalWrite(LED_PIN, HIGH); 
-  // chNum = analogRead(AIN_PIN);
 
-  // cc = sonar.ping_cm(); // wrong!?
-  Serial.println(cc);
-  Serial.println("Hallo!");
-  cc = constrain(cc, 0, 254);  
-  if(abs(cc - lastValue) > (thresh)) {
-    controlChange(0, CH_NUM, cc);
-    lastValue = cc;
-  }  
-  delay(30); // this must be replaced by millis()
+  sens = distanceSensor.measureDistanceCm();
+  dist = constrain(sens, 0.0F, 50.0F);
+
+  // midiCur = map(dist, 0.0, 55.0, 0, 127);
+  midiCur = map(dist, 0.0F, 50.0F, 0, 127);
+  // midiCur = (int)midiCur;
+
+  if (abs(dist - lastVal) > (thresh)) { 
+    if (midiPre != midiCur) {
+      
+      ledState = !ledState;
+      digitalWrite(LED_BUILTIN, ledState);
+      usbMIDI.sendControlChange (cc, midiCur, midiCh);
+      lastVal = dist; 
+      midiPre = midiCur;
+    }
+  }
+  while(usbMIDI.read()){}
 }
