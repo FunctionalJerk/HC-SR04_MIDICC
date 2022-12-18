@@ -22,7 +22,7 @@ For cost reduction, this project will someday run on a Digistump Digispark / (At
 
 ## Requirements
 
-[Install PlatformIO for Visual Studio Code](https://docs.platformio.org/en/latest/integration/ide/vscode.html)
+First, install [PlatformIO for Visual Studio Code](https://docs.platformio.org/en/latest/integration/ide/vscode.html).
 
 You wont have the option of changing the USB-type to USB-MIDI, as [arduino instructions for usbMIDI](https://www.pjrc.com/teensy/td_midi.html) suggest.  
 In order to do so within VSCode, execute following commands (as described by user *ivankravets* [here](https://community.platformio.org/t/teensy2-0-usb-type-midi/511/2)):
@@ -35,10 +35,20 @@ cp -r ../usb_midi .
 
 # Digistump
 
-You need to fix the SoftwareSerial.cpp file of your library as described [here](https://community.platformio.org/t/project-inspection-error-register-r24-r26-r28-or-r30-required/18648/3). 
-I don't understand what's happening here, but it does the trick. 
+As mentioned above, this project should ultimately run on a Digistump / Attiny85. 
+Any help making this work will be highly appreciated. 
+So far I couldn't get the Digistump to communicate via USB, while the distance sensor is connected.
 
-If you encounter an error like `usb_open(): Permission denied. For Linux, copy file, copy file https://github.com/micronucleus/micronucleus/blob/master/commandline/49-micronucleus.rules to /etc/udev/rules.d.`
+Anyway, here's what I have learned through troubleshooting so far: 
+
+While uploading, I encountered two errors:
+
+- SoftwareSerial.h : 
+`project-inspection-error-register-r24-r26-r28-or-r30-required`
+You need to fix the SoftwareSerial.cpp file of your library as described [here](https://community.platformio.org/t/project-inspection-error-register-r24-r26-r28-or-r30-required/18648/3). 
+
+- micronucleus `usb_open(): Permission denied. [...]`, 
+you'll have to execute following commands in a terminal:  
 
 ```bash
 git clone git@github.com:micronucleus/micronucleus.git
