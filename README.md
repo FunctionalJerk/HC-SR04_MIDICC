@@ -43,14 +43,13 @@ Anyway, here's what I have learned through troubleshooting so far:
 
 While uploading, I encountered two errors:
 
-- SoftwareSerial.h :  
+1. SoftwareSerial.h :  
 `project-inspection-error-register-r24-r26-r28-or-r30-required`  
 You need to fix the SoftwareSerial.cpp file of your library as described [here](https://community.platformio.org/t/project-inspection-error-register-r24-r26-r28-or-r30-required/18648/3). 
 
-- micronucleus :  
-`usb_open(): Permission denied. [...]`,  
-you'll have to execute following commands in a terminal:  
-
+2. micronucleus :  
+`usb_open(): Permission denied. [...]`  
+you'll have to execute following commands in a terminal:
 ```bash
 git clone git@github.com:micronucleus/micronucleus.git
 cp micronucleus/commandline/49-micronucleus.rules /etc/udev/rules.d/49-micronucleus.rules
