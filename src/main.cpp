@@ -4,10 +4,6 @@
 #define TRIG_PIN 11
 #define ECHO_PIN 12
 #define DISTANCE 100
-// #define MIDI_NAME {'P', 'h', 'o', 'e', 'n', 'i,', 'g', 's', ' ', 'U', 'S', 'B'}
-// #define MIDI_NAME_LEN 12
-
-// struct usb_string_descriptor_struct usb_product_name
 
 UltraSonicDistanceSensor distanceSensor(TRIG_PIN, ECHO_PIN, DISTANCE);  // Initialize sensor that uses digital pins 11(trig) and 12(echo).
 

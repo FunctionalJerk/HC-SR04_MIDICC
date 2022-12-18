@@ -4,10 +4,6 @@
 The current state of this project is a working prototype, that is based on a `teensy3.2` and a `HC-SR04` proximity sensor.
 For cost reduction, this project will someday run on a Digistump Digispark / (Attiny85).
 
-
-# Teensyduino
-
-
 ## ToDo
 
 - add Switch ('up<->down', 'down<->up', 'note / cc / both')
@@ -15,6 +11,12 @@ For cost reduction, this project will someday run on a Digistump Digispark / (At
 - add DIN-MIDI
 - add Fritzing.png
 - make Digistump work
+
+## ressources
+
+[teensy-midi](https://www.pjrc.com/teensy/td_midi.html)
+
+# Teensyduino
 
 ## Requirements
 
