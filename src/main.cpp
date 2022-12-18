@@ -1,11 +1,11 @@
 #include <Arduino.h>
 #include <HCSR04.h>
 
-#define TRIG_PIN 11
-#define ECHO_PIN 12
+#define TRIG_PIN 12
+#define ECHO_PIN 11
 #define DISTANCE 100
 
-UltraSonicDistanceSensor distanceSensor(TRIG_PIN, ECHO_PIN, DISTANCE);  // Initialize sensor that uses digital pins 11(trig) and 12(echo).
+UltraSonicDistanceSensor distanceSensor(TRIG_PIN, ECHO_PIN, DISTANCE); 
 
 float dist = 50.0;
 float sens = 0.0;

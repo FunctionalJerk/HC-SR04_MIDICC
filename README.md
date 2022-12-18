@@ -20,6 +20,16 @@ For cost reduction, this project will someday run on a Digistump Digispark / (At
 
 ## Requirements
 
+### Wiring 
+**BOM**
+- Teensy 3.1 / 3.2
+- HC-SR04 - ultrasonic distance sensor
+- a/b toggle-switch 
+
+**fritzing**
+![fritzing](fritzing/HC-SR04_MIDICC_bb.png)
+
+
 Working in VSCode, you dont have the option of changing the USB-type to USB-MIDI. 
 In order to do so, execute following commands: (as described by user *ivankravets* [here](https://community.platformio.org/t/teensy2-0-usb-type-midi/511/2) )
 ```bash

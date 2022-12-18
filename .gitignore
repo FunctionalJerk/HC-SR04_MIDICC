@@ -4,3 +4,4 @@ test/
 lib/
 examples/
 open_port/
+fritzing/*.fzz
